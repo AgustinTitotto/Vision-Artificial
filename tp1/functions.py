@@ -12,8 +12,8 @@ def get_trackbar_value(trackbar_name, window_name): # Get tackbar value to chang
 
 def denoise(frame, method, radius): # Method to eliminate noise
     kernel = cv2.getStructuringElement(method, (radius, radius)) 
-    opening = cv2.morphologyEx(frame, cv2.MORPH_OPEN, kernel)
-    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
+    opening = cv2.morphologyEx(frame, cv2.MORPH_OPEN, kernel) # Erosión - dilatación, elimina ruido true (puntos blancos)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel) # Dilatación - erosión, elimina ruido false (puntos negros)
     return closing
 
 def get_contours(frame, mode, method):
