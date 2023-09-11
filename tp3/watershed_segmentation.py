@@ -42,7 +42,6 @@ def create_seed(event, x, y, flags, param):
         cv2.circle(seed_map, (x, y), 7, (seed_label,), -1)
         # Annotate the seed label on the image
         cv2.putText(image, str(seed_label), (x - 5, y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        seed_label = (seed_label % 9) + 1
 
 # Load the image to be segmented
 image = cv2.imread('input_image.jpg')
@@ -67,8 +66,11 @@ while True:
     # Display the seed map
     cv2.imshow('Seed Map', seed_colormap)
 
+    if(key >= ord('1')) and (key <= ord('9')):
+        seed_label = key - ord('0')
+
     # Wait for user input
-    key = cv2.waitKey(1) & 0xFF
+    key = cv2.waitKey(1)
 
     # If spacebar is pressed, perform watershed segmentation
     if key == ord(' '):
