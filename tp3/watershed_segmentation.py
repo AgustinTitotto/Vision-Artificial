@@ -1,36 +1,45 @@
 import cv2
 import numpy as np
 
-# Initialize the webcam
-cap = cv2.VideoCapture(0)
 
-if not cap.isOpened():
-    print("Error: Could not open webcam.")
-    exit()
+def grab_image():
+    global key
+    # Initialize the webcam
+    cap = cv2.VideoCapture(0)
 
-while True:
-    # Capture a frame from the webcam
-    ret, frame = cap.read()
+    while True:
+        # Capture a frame from the webcam
+        ret, frame = cap.read()
 
-    if not ret:
-        print("Error: Could not read frame from webcam.")
-        break
+        # Display the webcam feed
+        cv2.imshow('Image', frame)
 
-    # Display the webcam feed
-    cv2.imshow('Image', frame)
+        # Wait for a key press to capture the image
+        key = cv2.waitKey(1)
 
-    # Wait for a key press to capture the image
-    key = cv2.waitKey(1)
+        if key == ord('c'):
+            # Save the captured image as input_image.jpg
+            cv2.imwrite('input_image.jpg', frame)
+            print("Captured image saved as input_image.jpg")
+            break
 
-    if key == ord('c'):
-        # Save the captured image as input_image.jpg
-        cv2.imwrite('input_image.jpg', frame)
-        print("Captured image saved as input_image.jpg")
-        break
+    cap.release()
 
-# Release the webcam and close all windows
-cap.release()
-cv2.destroyAllWindows()
+
+def initialize_image():
+    global image, seed_map, seed_label
+    # Load the image to be segmented
+    image = cv2.imread('input_image.jpg')
+
+    # Initialize the seed map with zeros
+    seed_map = np.zeros(image.shape[:2], dtype=np.int32)
+
+    # Create a window for the image and set the mouse callback
+    cv2.namedWindow('Image')
+    cv2.setMouseCallback('Image', create_seed)
+
+    # Initialize seed label to 1
+    seed_label = 1
 
 
 # Function to create a circular seed with the specified label
@@ -41,50 +50,53 @@ def create_seed(event, x, y, flags, param):
         # Create a circular seed with a diameter of 7 pixels
         cv2.circle(seed_map, (x, y), 7, (seed_label,), -1)
         # Annotate the seed label on the image
-        cv2.putText(image, str(seed_label), (x - 5, y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(image, str(seed_label), (x - 5, y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
-# Load the image to be segmented
-image = cv2.imread('input_image.jpg')
 
-# Initialize the seed map with zeros
-seed_map = np.zeros(image.shape[:2], dtype=np.int32)
+def watershed():
+    while True:
+        global seed_map, seed_label, key, seed_colormap
+        # Display the image with seeds
+        cv2.imshow('Image', image)
 
-# Create a window for the image and set the mouse callback
-cv2.namedWindow('Image')
-cv2.setMouseCallback('Image', create_seed)
+        # Create a colormap for seed visualization
+        seed_colormap = cv2.applyColorMap((seed_map * 10).astype(np.uint8), cv2.COLORMAP_JET)
 
-# Initialize seed label to 1
-seed_label = 1
+        # Display the seed map
+        cv2.imshow('Seed Map', seed_colormap)
 
-while True:
-    # Display the image with seeds
-    cv2.imshow('Image', image)
+        if (key >= ord('1')) and (key <= ord('9')):
+            seed_label = key - ord('0')
 
-    # Create a colormap for seed visualization
-    seed_colormap = cv2.applyColorMap((seed_map * 10).astype(np.uint8), cv2.COLORMAP_JET)
+        # Wait for user input
+        key = cv2.waitKey(1)
 
-    # Display the seed map
-    cv2.imshow('Seed Map', seed_colormap)
+        # If spacebar is pressed, perform watershed segmentation
+        if key == ord(' '):
+            # Apply watershed segmentation
+            markers = cv2.watershed(image, seed_map)
 
-    if(key >= ord('1')) and (key <= ord('9')):
-        seed_label = key - ord('0')
+            # Overlay the segmentation result on the original image
+            image[markers == -1] = [0, 0, 255]
 
-    # Wait for user input
-    key = cv2.waitKey(1)
+            # Show the segmented image
+            cv2.imshow('Segmented Image', image)
 
-    # If spacebar is pressed, perform watershed segmentation
-    if key == ord(' '):
-        # Apply watershed segmentation
-        markers = cv2.watershed(image, seed_map)
+        if key == ord('r'):
+            cv2.destroyAllWindows()
+            grab_image()
+            initialize_image()
 
-        # Overlay the segmentation result on the original image
-        image[markers == -1] = [0, 0, 255]
+        if key == ord('d'):
+            seed_map = np.zeros(image.shape[:2], dtype=np.int32)
 
-        # Show the segmented image
-        cv2.imshow('Segmented Image', image)
 
-    # If 'q' is pressed, exit the loop
-    elif key == ord('q'):
-        break
+        # If 'q' is pressed, exit the loop
+        elif key == ord('q'):
+            cv2.destroyAllWindows()
+            break
 
-cv2.destroyAllWindows()
+
+grab_image()
+initialize_image()
+watershed()
