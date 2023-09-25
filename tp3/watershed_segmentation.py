@@ -60,7 +60,7 @@ def watershed():
         cv2.imshow('Image', image)
 
         # Create a colormap for seed visualization
-        seed_colormap = cv2.applyColorMap((seed_map * 10).astype(np.uint8), cv2.COLORMAP_JET)
+        seed_colormap = cv2.applyColorMap((seed_map * 100).astype(np.uint8), cv2.COLORMAP_JET)
 
         # Display the seed map
         cv2.imshow('Seed Map', seed_colormap)
@@ -86,9 +86,6 @@ def watershed():
             cv2.destroyAllWindows()
             grab_image()
             initialize_image()
-
-        if key == ord('d'):
-            seed_map = np.zeros(image.shape[:2], dtype=np.int32)
 
 
         # If 'q' is pressed, exit the loop
