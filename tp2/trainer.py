@@ -1,19 +1,43 @@
+import numpy as np
+import csv
 from joblib import dump, load
 from sklearn import tree
+from hu_generator import generate_hu_moments_file
+
+generate_hu_moments_file()
+
+def label_to_int(string_label):
+    if string_label == 'square': return 1
+    if string_label == 'triangle': return 2
+    if string_label == 'star': return 3
+
+    else:
+        raise Exception('unkown class_label')
 
 # dataset
-X = [
- [6.53608067e-04, 6.07480284e-16, 9.67218398e-18, 1.40311655e-19, -1.18450102e-37, 8.60883492e-28, -1.12639633e-37],
- [6.07480284e-16, 9.67218398e-18, 1.40311655e-19, -1.18450102e-37, 8.60883492e-28, -1.12639633e-37, 6.53608067e-04],
- [6.53608067e-04, 6.07480284e-16, 9.67218398e-18, 1.40311655e-19, -1.18450102e-37, 8.60883492e-28, -1.12639633e-37],
- [1.40311655e-19, -1.18450102e-37, 8.60883492e-28, -1.12639633e-37, 6.53608067e-04, 6.07480284e-16, 9.67218398e-18],
- [8.60883492e-28, -1.12639633e-37, 6.53608067e-04, 6.07480284e-16, 9.67218398e-18, 1.40311655e-19, -1.18450102e-37],
- [6.53608067e-04, 6.07480284e-16, 9.67218398e-18, 1.40311655e-19, -1.18450102e-37, 8.60883492e-28, -1.12639633e-37],
- [9.67218398e-18, 1.40311655e-19, -1.18450102e-37, 8.60883492e-28, -1.12639633e-37, 6.53608067e-04, 6.07480284e-16],
-]
+X = []
 
 # etiquetas, correspondientes a las muestras
-Y = [1, 1, 1, 2, 2, 3, 3]
+Y = []
+
+# Agarro las cosas en los archivos las guardo en variables y las mando a train data y labels
+def load_training_set():
+    global X
+    global Y
+    with open('generated-files/shapes-hu-moments.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            class_label = row.pop() # saca el ultimo elemento de la lista
+            floats = []
+            for n in row:
+                floats.append(float(n)) # tiene los momentos de Hu transformados a float.
+            X.append(np.array(floats, dtype=np.float32)) # momentos de Hu
+            Y.append(np.array([label_to_int(class_label)], dtype=np.int32)) # Resultados
+            #Valores y resultados se necesitan por separados
+    X = np.array(X, dtype=np.float32)
+    Y = np.array(Y, dtype=np.int32)
+
+load_training_set()
 
 # entrenamiento
 sorter = tree.DecisionTreeClassifier().fit(X, Y)
