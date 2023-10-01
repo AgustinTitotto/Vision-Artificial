@@ -1,4 +1,5 @@
 import cv2
+import math
 from functions import convert_to_color, on_trackbar, get_trackbar_value, denoise, get_contour, filter_contours_by_area
 from joblib import load
 
@@ -38,7 +39,9 @@ while True:
     for contour in filtered_contours:   
        
         hu_moments = cv2.HuMoments(cv2.moments(contour)).flatten()
-
+        for i in range(0, 7):
+            hu_moments[i] = -1 * math.copysign(1.0, hu_moments[i]) * math.log10(abs(hu_moments[i])) # Mapeo para agrandar la escala.
+    
         predicted_label = sorter.predict([hu_moments])[0]
         # min_score = min(square_score, circle_score, star_score)
 
