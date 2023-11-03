@@ -5,11 +5,11 @@ from joblib import load
 
 cap = cv2.VideoCapture(0) # Use laptop camara
 cv2.namedWindow('img1') # Create Window
-cv2.createTrackbar('threshold', 'img1', 184, 255, on_trackbar) # Create trackbar for threshold
+cv2.createTrackbar('threshold', 'img1', 80, 255, on_trackbar) # Create trackbar for threshold
 cv2.createTrackbar('denoise', 'img1', 7, 50, on_trackbar) # Create trackbar for denoise
 cv2.createTrackbar('minArea', 'img1', 450, 10000, on_trackbar) # Create trackbars for area
 cv2.createTrackbar('maxArea', 'img1', 95000, 99999, on_trackbar)
-cv2.createTrackbar('tolerance', 'img1', 20, 100, on_trackbar) # Create trackbar for distance, decimal
+#cv2.createTrackbar('tolerance', 'img1', 20, 100, on_trackbar) # Create trackbar for distance, decimal
 saved_contours = []
 biggest_contour = None
 
@@ -26,7 +26,7 @@ while True:
     kernel_radius = get_trackbar_value('denoise', 'img1') # Grab trackbar value for denoise
     min_area = get_trackbar_value('minArea', 'img1')
     max_area = get_trackbar_value('maxArea', 'img1')
-    distance = get_trackbar_value('tolerance', 'img1')/100 # Grab trackbar value for distance, then convert to decimal
+    #distance = get_trackbar_value('tolerance', 'img1')/100 # Grab trackbar value for distance, then convert to decimal
     
     ret1, thresh1 = cv2.threshold(grey_frame, threshold_value, 255, cv2.THRESH_BINARY) # Apply threshold with trackbar value
     denoise_frame = denoise(thresh1, cv2.MORPH_ELLIPSE, kernel_radius) # Apply denoise
