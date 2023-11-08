@@ -12,17 +12,18 @@ loaded_model = joblib.load(model_filename)
 image_path = './dataset/correctPosture/24.png'
 img = cv2.imread(image_path)
 
-cap = cv2.VideoCapture(0) # Use laptop camara
-cv2.namedWindow('img1') # Create Window
+cap = cv2.VideoCapture(0)  # Use laptop camara
+cv2.namedWindow('img1')  # Create Window
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose()
+mp_draw = mp.solutions.drawing_utils
 
 while True:
     ret, frame = cap.read()
     flip_frame = cv2.flip(frame, 1)
 
     # Preprocess the image and extract pose landmarks
-    mp_pose = mp.solutions.pose
-    pose = mp_pose.Pose()
-    mp_draw = mp.solutions.drawing_utils
+
     results = pose.process(flip_frame)
 
     # Extract pose landmarks and format them
@@ -66,10 +67,8 @@ while True:
         cv2.putText(flip_frame, f'Predicted Pose: {text}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         cv2.imshow('Image with Prediction', flip_frame)
 
-    if cv2.waitKey(1) == ord('z'): # Waits () amount of time, if the key 'z' is pressed, it stops the loopz
+    if cv2.waitKey(1) == ord('z'):  # Waits () amount of time, if the key 'z' is pressed, it stops the loopz
         break
 
 cap.release()
 cv2.destroyAllWindows()
-
-
