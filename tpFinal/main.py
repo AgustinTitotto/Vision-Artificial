@@ -45,6 +45,7 @@ while True:
 
         # Decode the label (if needed)
         text = 'help'
+        print(predicted_label)
 
         if predicted_label == 1.0:
             text = 'correctPosture'
@@ -55,7 +56,7 @@ while True:
         elif predicted_label == 4.0:
             text = 'incorrect leg posture'
         else:
-            print("error")
+            text = 'nothing'
 
         mp_draw.draw_landmarks(flip_frame, results.pose_landmarks,
                                mp_pose.POSE_CONNECTIONS,

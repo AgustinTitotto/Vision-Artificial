@@ -9,6 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import SMOTE
 from sklearn.ensemble import RandomForestClassifier
 import joblib
+from sklearn.metrics import accuracy_score
 
 seed = 333
 image_path = []
@@ -76,7 +77,7 @@ X_train, X_test, y_train, y_test = train_test_split(x_position, y_position,
                                                     test_size=0.2, shuffle=True,
                                                     random_state=seed)
 
-forest = RandomForestClassifier(n_estimators=100, random_state=seed)
+forest = RandomForestClassifier(n_estimators=200, random_state=seed)
 forest.fit(X_train, y_train)
 
 joblib.dump(forest, "model.pkl")
