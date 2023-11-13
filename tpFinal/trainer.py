@@ -76,10 +76,7 @@ X_train, X_test, y_train, y_test = train_test_split(x_position, y_position,
                                                     test_size=0.2, shuffle=True,
                                                     random_state=seed)
 
-smote = SMOTE(random_state=seed, k_neighbors=3)
-X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
-
-forest = RandomForestClassifier(n_estimators=51, random_state=seed)
-forest.fit(X_resampled, y_resampled)
+forest = RandomForestClassifier(n_estimators=100, random_state=seed)
+forest.fit(X_train, y_train)
 
 joblib.dump(forest, "model.pkl")
