@@ -175,7 +175,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         cv2.putText(image, "Press 'r' to change",
                     (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
 
-        cv2.imshow('img', image)
+        cv2.imshow('ACERTA', image)
         # Check for key press to change selected hand
         key = cv2.waitKey(10) & 0xFF
         if key == ord('q'):
