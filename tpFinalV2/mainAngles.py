@@ -132,7 +132,6 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 incorrect_arm_position = leftWrist
                 incorrect_elbow_position = rightElbow
 
-
             # Posture detection
             if invalidArmAngle(arm_angle):
                 cv2.putText(image, "WRONG ARM POSITION",
@@ -167,8 +166,8 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                                           mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=2)
                                           )
 
-        except Exception as e:
-            print(f"Error: {e}")
+        except:
+            pass
 
         # Display selected hand information
         cv2.putText(image, f"Selected Hand: {selected_hand.capitalize()}",
